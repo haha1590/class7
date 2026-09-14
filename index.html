@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3학년 7반 현장체험학습 신청</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --ink:#1c2b28;
+    --sub:#5c6f6a;
+    --paper:#f6f4ee;
+    --card:#ffffff;
+    --line:#e1ddd0;
+    --pine:#1f6f63;
+    --pine-dark:#154f47;
+    --pine-pale:#e5f1ee;
+    --clay:#e2704f;
+    --clay-pale:#fbe7e0;
+    --gold:#c99a3b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Pretendard', -apple-system, 'Malgun Gothic', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    word-break:keep-all;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:36px 20px 80px;}
+
+  header.top{margin-bottom:28px;}
+  header.top .eyebrow{color:var(--pine);font-size:14px;font-weight:600;margin:0 0 6px;}
+  header.top h1{font-size:28px;line-height:1.35;margin:0 0 8px;font-weight:700;}
+  header.top p{color:var(--sub);margin:0;font-size:15px;}
+
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:22px;}
+  @media (max-width:800px){.grid{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px;
+  }
+  .card h2{font-size:17px;margin:0 0 16px;font-weight:700;}
+
+  label{display:block;font-size:13px;color:var(--sub);margin:14px 0 6px;font-weight:600;}
+  label:first-of-type{margin-top:0;}
+  select, input[type="date"], input[type="text"]{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:15px;
+    font-family:inherit;
+    background:#fdfcf9;
+    color:var(--ink);
+  }
+  select:focus, input:focus{outline:2px solid var(--pine);outline-offset:1px;}
+
+  .daterow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+  .btn{
+    margin-top:18px;
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:var(--pine);
+    color:#fff;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn:hover{background:var(--pine-dark);}
+  .btn:disabled{background:#a9b8b4;cursor:not-allowed;}
+
+  .msg{margin-top:12px;font-size:13px;padding:10px 12px;border-radius:8px;display:none;}
+  .msg.show{display:block;}
+  .msg.ok{background:var(--pine-pale);color:var(--pine-dark);}
+  .msg.err{background:var(--clay-pale);color:#a03f24;}
+
+  .mylist{margin-top:24px;}
+  .mylist h3{font-size:14px;color:var(--sub);margin:0 0 10px;font-weight:700;}
+  .myitem{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;
+  }
+  .myitem .info{color:var(--ink);}
+  .myitem .info span{color:var(--sub);display:block;font-size:12px;margin-top:2px;}
+  .myitem button{
+    border:none;background:transparent;color:var(--clay);font-size:12.5px;
+    cursor:pointer;font-weight:700;font-family:inherit;
+  }
+
+  .tabs{display:flex;gap:8px;margin-bottom:18px;}
+  .tab{
+    flex:1;padding:10px;text-align:center;border-radius:8px;
+    background:var(--card);border:1px solid var(--line);
+    cursor:pointer;font-weight:700;color:var(--sub);font-size:14.5px;
+  }
+  .tab.active{background:var(--pine);color:#fff;border-color:var(--pine);}
+
+  .cal{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);}
+  .cal-head{
+    display:grid;grid-template-columns:repeat(7,1fr);
+    background:var(--pine-pale);
+  }
+  .cal-head div{padding:10px 4px;text-align:center;font-size:12.5px;font-weight:700;color:var(--pine-dark);}
+  .cal-body{display:grid;grid-template-columns:repeat(7,1fr);}
+  .cell{
+    min-height:92px;border-top:1px solid var(--line);border-left:1px solid var(--line);
+    padding:6px 6px 8px;position:relative;
+  }
+  .cal-body .cell:nth-child(7n+1){border-left:none;}
+  .cell.empty{background:#fafaf6;}
+  .cell .num{font-size:12px;color:var(--sub);font-weight:600;}
+  .cell.today .num{color:var(--pine);}
+  .chip{
+    margin-top:4px;font-size:10.5px;line-height:1.3;
+    background:var(--pine-pale);color:var(--pine-dark);
+    border-radius:5px;padding:2px 5px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .cell.warn{background:var(--clay-pale);}
+  .cell.warn .chip{background:#f6cabb;color:#8a3319;}
+  .warn-flag{
+    position:absolute;top:5px;right:6px;font-size:11px;
+  }
+  .more{font-size:10px;color:var(--sub);margin-top:2px;}
+
+  .legend{display:flex;gap:16px;align-items:center;margin:14px 2px 0;font-size:12.5px;color:var(--sub);}
+  .legend .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+
+  .banner{
+    display:none;
+    background:var(--clay-pale);color:#8a3319;border:1px solid #f0c2b0;
+    border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13.5px;line-height:1.5;
+  }
+  .banner.show{display:block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">3학년 7반</p>
+    <h1>현장체험학습 신청</h1>
+    <p>신청 기간: 2026년 10월 1일 ~ 12월 31일 · 같은 날짜에 3명 이상 겹치면 자동으로 표시됩니다</p>
+  </header>
+
+  <div class="grid">
+
+    <!-- 신청 폼 -->
+    <div class="card">
+      <h2>신청서 작성</h2>
+
+      <label for="studentSelect">이름</label>
+      <select id="studentSelect"></select>
+
+      <label>기간</label>
+      <div class="daterow">
+        <input type="date" id="startDate" min="2026-10-01" max="2026-12-31">
+        <input type="date" id="endDate" min="2026-10-01" max="2026-12-31">
+      </div>
+
+      <label for="destination">여행지</label>
+      <input type="text" id="destination" placeholder="예: 제주도">
+
+      <button class="btn" id="submitBtn">신청하기</button>
+      <div class="msg" id="formMsg"></div>
+
+      <div class="mylist">
+        <h3>내 신청 내역</h3>
+        <div id="myItems"></div>
+      </div>
+    </div>
+
+    <!-- 캘린더 -->
+    <div>
+      <div class="banner" id="overlapBanner"></div>
+
+      <div class="tabs">
+        <div class="tab" data-month="9">10월</div>
+        <div class="tab" data-month="10">11월</div>
+        <div class="tab" data-month="11">12월</div>
+      </div>
+
+      <div class="cal">
+        <div class="cal-head">
+          <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+        </div>
+        <div class="cal-body" id="calBody"></div>
+      </div>
+
+      <div class="legend">
+        <span><span class="dot" style="background:var(--pine-pale);border:1px solid var(--pine);"></span>신청 있음</span>
+        <span><span class="dot" style="background:var(--clay-pale);border:1px solid var(--clay);"></span>3명 이상 중복 ⚠</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ⚠️ 배포한 GAS 웹 앱 URL을 아래에 붙여넣으세요
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbx-URYiT5IM0Khngn6aHUQ5YARE0WIpI6D0myk9IzGupeESytYgG4AA_s8DnHMdMitr8Q/exec';
+
+const YEAR = 2026;
+
+// 3학년 7반 명렬 (번호순) — 실제 번호와 다르면 아래 목록을 수정하세요
+const ROSTER = [
+  {no:1,  name:'강민지'}, {no:2,  name:'권이현'}, {no:3,  name:'김나영'},
+  {no:4,  name:'김나은'}, {no:5,  name:'김다현'}, {no:6,  name:'김민솔'},
+  {no:7,  name:'김한솔'}, {no:8,  name:'배보경'}, {no:9,  name:'양지은'},
+  {no:10, name:'여지윤'}, {no:11, name:'임지수'}, {no:12, name:'정다혜'},
+  {no:13, name:'조나윤'}, {no:14, name:'주수현'}, {no:15, name:'황윤주'},
+  {no:16, name:'황지윤'}
+];
+
+let applications = [];
+let activeMonth = 9; // 0-indexed: 9=10월
+
+const studentSelect = document.getElementById('studentSelect');
+const startDateEl = document.getElementById('startDate');
+const endDateEl = document.getElementById('endDate');
+const destinationEl = document.getElementById('destination');
+const submitBtn = document.getElementById('submitBtn');
+const formMsg = document.getElementById('formMsg');
+const myItemsEl = document.getElementById('myItems');
+const calBody = document.getElementById('calBody');
+const overlapBanner = document.getElementById('overlapBanner');
+
+function initRoster(){
+  ROSTER.forEach(s=>{
+    const opt = document.createElement('option');
+    opt.value = s.name;
+    opt.dataset.no = s.no;
+    opt.textContent = s.no + '. ' + s.name;
+    studentSelect.appendChild(opt);
+  });
+}
+
+function showMsg(text, type){
+  formMsg.textContent = text;
+  formMsg.className = 'msg show ' + type;
+  setTimeout(()=>{ formMsg.classList.remove('show'); }, 3500);
+}
+
+async function loadApplications(){
+  if(GAS_URL.includes('YOUR_GAS')){
+    calBody.innerHTML = '<div style="grid-column:1/-1;padding:24px;text-align:center;color:var(--sub);font-size:13px;">GAS_URL이 설정되지 않았습니다. index.html 상단의 GAS_URL 값을 배포한 웹 앱 주소로 바꿔주세요.</div>';
+    return;
+  }
+  try{
+    const res = await fetch(GAS_URL);
+    const json = await res.json();
+    if(json.status === 'ok'){
+      applications = json.data;
+      renderCalendar();
+      renderMyItems();
+    }
+  }catch(err){
+    console.error(err);
+  }
+}
+
+async function submitApplication(){
+  const opt = studentSelect.selectedOptions[0];
+  const name = opt.value;
+  const no = opt.dataset.no;
+  const startDate = startDateEl.value;
+  const endDate = endDateEl.value;
+  const destination = destinationEl.value.trim();
+
+  if(!startDate || !endDate){ showMsg('기간을 입력해주세요.', 'err'); return; }
+  if(startDate > endDate){ showMsg('종료일이 시작일보다 빠릅니다.', 'err'); return; }
+  if(!destination){ showMsg('여행지를 입력해주세요.', 'err'); return; }
+
+  submitBtn.disabled = true;
+  try{
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ no, name, startDate, endDate, destination })
+    });
+    const json = await res.json();
+    if(json.status === 'ok'){
+      showMsg('신청이 완료되었습니다.', 'ok');
+      destinationEl.value = '';
+      await loadApplications();
+    }else{
+      showMsg(json.message || '오류가 발생했습니다.', 'err');
+    }
+  }catch(err){
+    showMsg('전송 중 오류가 발생했습니다.', 'err');
+  }finally{
+    submitBtn.disabled = false;
+  }
+}
+
+async function deleteApplication(app){
+  if(!confirm(app.destination + ' (' + app.startDate + ' ~ ' + app.endDate + ') 신청을 취소할까요?')) return;
+  try{
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action:'delete', name: app.name, startDate: app.startDate, endDate: app.endDate, destination: app.destination })
+    });
+    const json = await res.json();
+    if(json.status === 'ok'){
+      await loadApplications();
+    }else{
+      alert(json.message || '취소 중 오류가 발생했습니다.');
+    }
+  }catch(err){
+    alert('취소 중 오류가 발생했습니다.');
+  }
+}
+
+function renderMyItems(){
+  const name = studentSelect.value;
+  const mine = applications.filter(a => a.name === name)
+    .sort((a,b)=> a.startDate.localeCompare(b.startDate));
+  if(mine.length === 0){
+    myItemsEl.innerHTML = '<p style="color:var(--sub);font-size:13px;margin:8px 0 0;">신청 내역이 없습니다.</p>';
+    return;
+  }
+  myItemsEl.innerHTML = '';
+  mine.forEach(app=>{
+    const row = document.createElement('div');
+    row.className = 'myitem';
+    row.innerHTML =
+      '<div class="info">' + app.destination +
+      '<span>' + app.startDate + ' ~ ' + app.endDate + '</span></div>';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '취소';
+    delBtn.onclick = () => deleteApplication(app);
+    row.appendChild(delBtn);
+    myItemsEl.appendChild(row);
+  });
+}
+
+function dateRangeDays(startStr, endStr){
+  const days = [];
+  let d = new Date(startStr + 'T00:00:00');
+  const end = new Date(endStr + 'T00:00:00');
+  while(d <= end){
+    days.push(d.toISOString().slice(0,10));
+    d.setDate(d.getDate()+1);
+  }
+  return days;
+}
+
+function buildDayMap(){
+  const map = {}; // dateStr -> [ {name, destination} ]
+  applications.forEach(app=>{
+    dateRangeDays(app.startDate, app.endDate).forEach(dateStr=>{
+      if(!map[dateStr]) map[dateStr] = [];
+      map[dateStr].push({ name: app.name, destination: app.destination });
+    });
+  });
+  return map;
+}
+
+function renderCalendar(){
+  if(GAS_URL.includes('YOUR_GAS')) return;
+  const dayMap = buildDayMap();
+  const firstDow = new Date(YEAR, activeMonth, 1).getDay();
+  const daysInMonth = new Date(YEAR, activeMonth+1, 0).getDate();
+  const todayStr = new Date().toISOString().slice(0,10);
+
+  calBody.innerHTML = '';
+
+  for(let i=0;i<firstDow;i++){
+    const cell = document.createElement('div');
+    cell.className = 'cell empty';
+    calBody.appendChild(cell);
+  }
+
+  const overlapDates = [];
+
+  for(let day=1; day<=daysInMonth; day++){
+    const mm = String(activeMonth+1).padStart(2,'0');
+    const dd = String(day).padStart(2,'0');
+    const dateStr = `${YEAR}-${mm}-${dd}`;
+    const entries = dayMap[dateStr] || [];
+    const isOverlap = entries.length >= 3;
+    if(isOverlap) overlapDates.push({dateStr, count: entries.length});
+
+    const cell = document.createElement('div');
+    cell.className = 'cell' + (isOverlap ? ' warn' : '') + (dateStr === todayStr ? ' today' : '');
+
+    const num = document.createElement('div');
+    num.className = 'num';
+    num.textContent = day;
+    cell.appendChild(num);
+
+    if(isOverlap){
+      const flag = document.createElement('span');
+      flag.className = 'warn-flag';
+      flag.textContent = '⚠️';
+      flag.title = entries.length + '명 중복 신청';
+      cell.appendChild(flag);
+    }
+
+    const shown = entries.slice(0,3);
+    shown.forEach(e=>{
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.textContent = e.name + ' · ' + e.destination;
+      cell.appendChild(chip);
+    });
+    if(entries.length > 3){
+      const more = document.createElement('div');
+      more.className = 'more';
+      more.textContent = '+' + (entries.length - 3) + '명 더보기';
+      cell.appendChild(more);
+    }
+
+    calBody.appendChild(cell);
+  }
+
+  if(overlapDates.length > 0){
+    const monthLabel = (activeMonth+1) + '월';
+    const list = overlapDates.map(o => `${parseInt(o.dateStr.slice(8))}일(${o.count}명)`).join(', ');
+    overlapBanner.textContent = `⚠️ ${monthLabel} 중복 신청 경고: ${list} — 같은 날짜에 3명 이상 신청되어 있습니다. 담임교사에게 확인이 필요합니다.`;
+    overlapBanner.classList.add('show');
+  }else{
+    overlapBanner.classList.remove('show');
+  }
+}
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    activeMonth = parseInt(tab.dataset.month);
+    renderCalendar();
+  });
+});
+document.querySelector('.tab[data-month="9"]').classList.add('active');
+
+studentSelect.addEventListener('change', renderMyItems);
+submitBtn.addEventListener('click', submitApplication);
+
+initRoster();
+loadApplications();
+</script>
+</body>
+</html>
